@@ -1,0 +1,102 @@
+{% extends "base.html" %} {% block content %}
+
+<!-- BANNER -->
+<section
+  class="section-hero overlay inner-page bg-image"
+  id="home-section"
+  style="background-image: url({{ url_for('static', filename='img/susan-yin-2JIvboGLeho-unsplash.jpg')}})"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Dashboard</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN SECTION -->
+<section class="site-section">
+  <div class="container">
+    {% if user_data %} 
+    {% with errors = get_flashed_messages(category_filter=["error"]) %} 
+    {% if errors %}
+    <div class="alert alert-danger">
+      {% for msg in errors %} {{ msg }} {% endfor %}
+    </div>
+    {% endif %} 
+    {% endwith %} 
+    
+    {% with info = get_flashed_messages(category_filter=["info"]) %} 
+    {% if info %}
+    <div class="alert alert-success">
+      {% for msg in info %} {{ msg }} {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Email</th>
+            <th scope="col">Created</th>
+            <th scope="col">Status</th>
+            <th scope="col" colspan="3">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in user_data %}
+          
+          <tr>
+            <th scope="row" class="align-middle">{{loop.index}}</th>
+            <td class="align-middle">{{item.account_id}}</td>
+            <td class="align-middle">{{item.email}}</td>
+            <td class="align-middle">{{item.created_on}}</td>
+            <td class="align-middle">{{item.status}}</td>
+            <td class="align-middle">{{item.role}}</td>
+            <td class="align-middle">
+              {% if item.role != "admin" %} {% if item.role == "mod" %}
+              <a
+                type="button"
+                href="{{url_for('administrator.remove_moderator', user=item.account_id)}}"
+                class="btn btn-primary text-white"
+                >Remove Moderator</a
+              >
+              {% endif %} {% if item.role != "mod" %}
+              <a
+                type="button"
+                href="{{url_for('administrator.make_moderator', user=item.account_id)}}"
+                class="btn btn-info text-white"
+                >Make Moderator</a
+              >
+              {% endif %} {% endif %}
+            </td>
+            <td class="align-middle">
+              {% if item.role != "admin" %} 
+              {% if item.status == "request ban" %}
+              <a
+                type="button"
+                href=""
+                class="btn btn-outline-danger text-red text-nowrap"
+                >Ban User</a
+              >
+              {% else %}
+              <a
+                type="button"
+                class="btn btn-outline-secondary text-black text-nowrap"
+                >Ban User</a
+              >
+              {% endif %} 
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

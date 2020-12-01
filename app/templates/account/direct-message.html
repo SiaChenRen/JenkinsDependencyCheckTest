@@ -1,0 +1,130 @@
+{% extends "base.html" %} {% block content %}
+<section
+  class="section-hero overlay inner-page bg-image"
+  style="background-image: url({{ url_for('static', filename='img/susan-yin-2JIvboGLeho-unsplash.jpg')}})"
+  id="home-section"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Direct Message</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="row col-12 mb-5 px-0 d-flex justify-content-center">
+  <section class="conversation-section my-3 col-3">
+    <h4 class="text-center mt-4">Members</h4>
+    <h6 class="text-center mb-4">Chat</h6>
+    <div class="container">
+      <ul class="list-group h-100">
+        {% if error %}
+        <li class="list-group-item error">
+          <p>{{error}}</p>
+        </li>
+        {% endif %} {% for user in conversation %} {% if user == currentUser %}
+        <li class="list-group-item active">
+          <a href="{{url_for('account.direct_message', user=user)}}"
+            >{{ user }}</a
+          >
+        </li>
+        {% else %}
+        <li class="list-group-item">
+          <a href="{{url_for('account.direct_message', user=user)}}"
+            >{{ user }}</a
+          >
+        </li>
+        {% endif %} {% endfor %} {% if conversation|length == 0 %}
+        <li class="list-group-item">No Active Conversation.</li>
+        {% endif %}
+      </ul>
+    </div>
+  </section>
+  <section class="message-section my-3 col-7 px-0">
+    <h4 class="text-center chat-title py-3">Chat Messages</h4>
+    <div class="container pt-5">
+      <ul class="list-group">
+        {% for data in message %} {% if data.account1_id == session['user'] %}
+        <li class="list-group-item reciever">
+          <p class="reciever-message">{{data.message}}</p>
+        </li>
+        {% else %}
+        <li class="list-group-item sender">
+          <p class="sender-message">{{data.message}}</p>
+        </li>
+        {% endif %} {% endfor %}
+      </ul>
+    </div>
+  </section>
+  <section class="sendmessage-section my-2 mb-5 col-7 offset-3 px-0">
+    <form class="col-12 row mx-0 px-0" method="POST" action="">
+      <input
+        type="text"
+        class="form-control col-9 post-message"
+        name="post-message"
+        placeholder="Enter your message here."
+      />
+      <input type="hidden" name="user" value="{{ user }}" />
+      <input
+        type="hidden"
+        name="csrf_token"
+        id="csrf_token"
+        value="{{ csrf_token() }}"
+      />
+      <input
+        type="submit"
+        value="Send Message"
+        class="btn submit ml-auto text-center col-2 btn-primary text-white offset-1"
+      />
+    </form>
+  </section>
+</section>
+
+<script>
+  $(document).ready(function () {
+    // Create alphanumeric validator and common symbol validator
+    jQuery.validator.addMethod("alphanumeric", function (value, element) {
+      return (
+        this.optional(element) ||
+        /^[ A-Za-z0-9~!@#$%^&*\\(\\)_+-=""'':;,<>.?/~`]+$/i.test(value)
+      );
+    });
+
+    $("#error-note").hide();
+    $("form").validate({
+      errorLabelContainer: "#error-note",
+      errorElement: "div",
+      rules: {
+        "post-message": {
+          required: true,
+          maxlength: 255,
+          alphanumeric: true
+        },
+      },
+      messages: {
+        "post-message": {
+          required: "Please enter your message.",
+          maxlength: "The number of character in search exceed 255 character.",
+          alphanumeric: "Letters, numbers, and common symbols only."
+        },
+      },
+      invalidHandler: function (event, validator) {
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+          $("#error-note").show();
+        } else {
+          $("#error-note").text = "";
+          $("#error-note").hide();
+        }
+      },
+      submitHandler: function (form) {
+        $("#error-note").text = "";
+        $("#error-note").hide();
+        $(form).ajaxSubmit();
+      },
+    });
+  });
+</script>
+
+{% endblock %}

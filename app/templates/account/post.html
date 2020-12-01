@@ -1,0 +1,75 @@
+{% extends "base.html" %} {% block content %}
+<!-- STATITICS -->
+<section
+  class="section-hero overlay inner-page bg-image"
+  style="
+    background-image: url('/static/img/alfons-morales-YLSwjSy7stw-unsplash.jpg');
+  "
+  id="home-section"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1 class="text-white font-weight-bold ">My Post</h1>
+        <div class="custom-breadcrumbs mb-5">
+          <a href="{{url_for('index')}}">Account</a>
+          <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Post</strong></span>
+        </div>
+
+        <form
+          method="POST"
+          class="search-jobs-form"
+          action="{{url_for('post.search_post')}}"
+        >
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="site-section">
+  <div class="container">
+    {% with messages = get_flashed_messages(category_filter=["error"]) %}
+    {% if messages %}
+    <div class="alert alert-info" role="alert">
+      {% for message in messages %}
+        {{message}}
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+    {% with messages = get_flashed_messages(category_filter=["success"]) %}
+    {% if messages %}
+    <div class="alert alert-success" role="alert">
+      {% for message in messages %}
+        {{message}}
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% if (data|length) > 0 %} {% for item in data %} 
+    <ul class="job-listings mb-2">
+      <li class="job-listing d-block d-sm-flex pb-3 pb-sm-0 align-items-center">
+        <div
+          class="job-listing-about d-sm-flex custom-width w-100 justify-content-between py-2"
+        >
+          <div class="job-listing-position custom-width w-75 mb-3 mb-sm-0">
+            <h2 class="my-3 px-3">{{item.title|safe}}</h2>
+            <p class="col-12">{{item.description|safe}}</p>
+          </div>
+          <div class="job-listing-meta text-center text-md-center">
+            <span class="col-10 col-md-8 col-lg-8 badge badge-success px-2">Posted on : {{item.created_on}}</span>
+            <a type="button" href="{{url_for('account.edit_post', post=item.post_id)}}" class="col-10 col-md-8 col-lg-8 btn btn-info my-2 text-white">Edit</a>
+            <a type="button" href="{{url_for('account.delete_post', post=item.post_id)}}" class="col-10 col-md-8 col-lg-8 btn btn-outline-danger text-red">Delete</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+    {% endfor %} {% else %}
+    <h1 class="col-12 text-center">No Post found</h1>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

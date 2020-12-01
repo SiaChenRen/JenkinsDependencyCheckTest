@@ -1,0 +1,147 @@
+{% extends "base.html" %} {% block content %}
+
+<!-- BANNER -->
+<section
+  class="section-hero overlay inner-page bg-image"
+  id="home-section"
+  style="background-image: url({{ url_for('static', filename='img/susan-yin-2JIvboGLeho-unsplash.jpg')}})"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Dashboard</h1>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN SECTION -->
+<section class="site-section">
+  <div class="container">
+    {% if page == "post" %}
+    <a type="button" class="btn btn-secondary text-white mr-2 mb-5">
+      View Post
+    </a>
+    {% else %}
+    <a
+      type="button"
+      href="{{url_for('moderator.moderator_view_post')}}"
+      class="btn btn-primary text-white mr-2 mb-5"
+    >
+      View Post
+    </a>
+    {% endif %} {% if page == "user" %}
+    <a type="button" class="btn btn-secondary text-white mr-2 mb-5">
+      View User
+    </a>
+    {% else %}
+    <a
+      type="button"
+      href="{{url_for('moderator.moderator_view_user')}}"
+      class="btn btn-primary text-white mr-2 mb-5"
+    >
+      View User
+    </a>
+    {% endif %} 
+    {% if user_data %} 
+    {% with errors = get_flashed_messages(category_filter=["error"]) %} 
+    {% if errors %}
+    <div class="alert alert-danger">
+      {% for msg in errors %} {{ msg }} {% endfor -%}
+    </div>
+    {% endif %} {% endwith %} {% with info =
+    get_flashed_messages(category_filter=["info"]) %} {% if info %}
+    <div class="alert alert-success">
+      {%- for msg in info %} {{ msg }} {% endfor -%}
+    </div>
+    {% endif %} {% endwith %}
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Account ID</th>
+            <th scope="col">Email</th>
+            <th scope="col">Created</th>
+            <th scope="col">Status</th>
+            <th scope="col" colspan="3">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+            {% for item in user_data %}
+          <tr>
+            <th scope="row" class="align-middle">{{loop.index}}</th>
+            <td class="align-middle">{{item.account_id}}</td>
+            <td class="align-middle">{{item.email}}</td>
+            <td class="align-middle">{{item.created_on}}</td>
+            <td class="align-middle">{{item.status}}</td>
+            <td class="align-middle">{{item.role}}</td>
+            <td class="align-middle">
+              {% if item.role != "mod" %}
+              {% if item.status != "request ban" %}
+              <a
+                type="button"
+                href="{{url_for('moderator.moderator_request_ban_user', user=item.account_id)}}"
+                class="btn btn-outline-danger text-red text-nowrap">Request Ban</a>
+              {% endif %}
+              {% if item.status == "request ban" %}
+              <a
+              type="button"
+              href="{{url_for('moderator.morderator_undo_ban_request', user=item.account_id)}}"
+              class="btn btn-outline-success text-nowrap">Undo Request</a>
+              {% endif %}
+            
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %} {% if post_data %} {% with errors =
+    get_flashed_messages(category_filter=["error"]) %} {% if errors %}
+    <div class="alert alert-danger">
+      {% for msg in errors %} {{ msg }} {% endfor %}
+    </div>
+    {% endif %} {% endwith %} {% with info =
+    get_flashed_messages(category_filter=["info"]) %} {% if info %}
+    <div class="alert alert-success">
+      {% for msg in info %} {{ msg }} {% endfor %}
+    </div>
+    {% endif %} {% endwith %}
+
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Post Title</th>
+            <th scope="col">Post Description</th>
+            <th scope="col">Created On</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in post_data %}
+          <tr>
+            <th scope="row" class="align-middle">{{loop.index}}</th>
+            <td class="align-middle">{{item.title|safe}}</td>
+            <td class="align-middle">{{item.description|safe}}</td>
+            <td class="align-middle">{{item.created_on}}</td>
+            <td class="align-middle">
+              <a
+                type="button"
+                href="{{url_for('moderator.moderator_remove_post', post=item.post_id)}}"
+                class="btn btn-outline-danger text-red"
+                >Remove Post</a
+              >
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

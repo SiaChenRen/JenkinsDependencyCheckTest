@@ -10,6 +10,6 @@ RUN apk add bash nano chromium chromium-chromedriver
 #     chmod a+x geckodriver && chmod 777 geckodriver &&\
 #     mv geckodriver /usr/bin/
 
-# COPY ./requirements.txt /var/www/requirements.txt
-# RUN pip3 install -r /var/www/requirements.txt
+COPY ./requirements.txt /var/www/requirements.txt
+RUN pip3 install -r /var/www/requirements.txt
 RUN pip3 install pytest

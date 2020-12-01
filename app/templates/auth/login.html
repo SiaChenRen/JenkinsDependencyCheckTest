@@ -1,0 +1,125 @@
+{% extends "base.html" %} {% block content %}
+<!-- BANNER -->
+<section
+  class="section-hero overlay inner-page bg-image"
+    style="background-image: url({{ url_for('static', filename='img/susan-yin-2JIvboGLeho-unsplash.jpg')}})"
+  id="home-section"
+>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-7">
+        <h1 class="text-white font-weight-bold">Login</h1>
+        <div class="custom-breadcrumbs">
+          <a href="{{url_for('index')}}">Home</a>
+          <span class="mx-2 slash">/</span>
+          <span class="text-white"><strong>Log In</strong></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGIN FORM -->
+<section class="site-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 mx-auto">
+        <h2 class="mb-4">Log In To SecureTrade</h2>
+        <form class="p-4 border rounded" method="POST" action="">
+          <div class="row form-group">
+            <div class="col-md-12 mb-3 mb-md-0">
+              <label class="text-black" for="email">Email</label>
+              <input
+                type="email"
+                name="email"
+                class="form-control"
+                placeholder="Email address"
+                required
+              />
+            </div>
+          </div>
+          <div class="row form-group mb-4">
+            <div class="col-md-12 mb-3 mb-md-0">
+              <label class="text-black" for="password">Password</label>
+              <input
+                type="password"
+                name="password"
+                class="form-control"
+                placeholder="Password"
+                required
+              />
+            </div>
+          </div>
+
+          <div id="error-note" class="alert alert-danger" role="alert"></div>
+          {% if error %}
+          <div class="alert alert-danger" role="alert">{{ error }}</div>
+          {% endif %} {% with messages = get_flashed_messages() %} {% if
+          messages %} {% for message in messages %}
+          <div class="alert alert-info" role="info">{{ message }}</div>
+          {% endfor %} {% endif %} {% endwith %}
+
+          <div class="row form-group">
+            <div class="col-md-12">
+              <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+                readonly
+              />
+              <input
+                type="submit"
+                name="login"
+                value="Log In"
+                class="btn px-4 btn-primary text-white"
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    $("#error-note").hide();
+    $("form").validate({
+      errorLabelContainer: "#error-note",
+      errorElement: "div",
+      rules: {
+        email: {
+          required: true,
+          email: true,
+        },
+        password: {
+          required: true,
+          minlength: 8,
+          maxlength: 64
+        },
+      },
+      messages: {
+        email: "Please enter a valid email address.",
+        password: {
+          required: "Please provide a password.",
+          minlength: "Your password must be at least 8 characters long.",
+          maxlength: "Your password must be below 65 characters.",
+        },
+      },
+      invalidHandler: function (event, validator) {
+        // 'this' refers to the form
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+          $("#error-note").show();
+        } else {
+          $("#error-note").hide();
+        }
+      },
+      submitHandler: function (form) {
+        $(form).ajaxSubmit();
+      },
+    });
+  });
+</script>
+
+{% endblock %}

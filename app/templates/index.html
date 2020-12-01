@@ -1,0 +1,199 @@
+{% extends "base.html" %} {% block content %}
+<!-- STATITICS -->
+<section
+  class="home-section section-hero overlay bg-image"
+  style="
+    background-image: url('/static/img/kelly-sikkema-9OGNpJPVMZ8-unsplash.jpg');
+  "
+  id="home-section"
+>
+  <div class="container">
+    <div class="row align-items-center justify-content-center">
+      <div class="col-md-12">
+        <div class="mb-5 text-center">
+          <h1 class="text-white font-weight-bold">
+            The Easiest Way To Get Your Education Material
+          </h1>
+          <p>
+            “Education is the passport to the future, for tomorrow belongs to
+            those who prepare for it today.”
+          </p>
+        </div>
+        <form
+          method="POST"
+          class="search-jobs-form"
+          action="{{url_for('post.search_post')}}"
+        >
+          <div class="row mb-3">
+            <div class="col-12 col-sm-6 col-md-12 col-lg-9 mb-4 mb-lg-0">
+              <input
+                type="text"
+                name="search"
+                class="form-control form-control-lg"
+                placeholder="Material title, Company..."
+                required
+              />
+            </div>
+            <div class="col-12 col-sm-6 col-md-12 col-lg-3 mb-4 mb-lg-0">
+              <input
+                type="hidden"
+                name="csrf_token"
+                id="csrf_token"
+                value="{{ csrf_token() }}"
+              />
+              <button
+                type="submit"
+                name="searchpost"
+                class="btn btn-primary btn-lg btn-block text-white btn-search"
+              >
+                <span class="icon-search icon mr-2"></span>Search Material
+              </button>
+            </div>
+          </div>
+
+          {% with messages =
+          get_flashed_messages(category_filter=["search_error"]) %} {% if
+          messages %}
+          <div class="alert alert-info mb-5" role="alert">
+            {% for message in messages %} {{message}} {% endfor %}
+          </div>
+          {% endif %} {% endwith %}
+
+          <div
+            class="alert alert-danger mb-5"
+            id="error-note"
+            role="alert"
+          ></div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <a href="#next" class="scroll-button smoothscroll">
+    <span class="icon-keyboard_arrow_down"></span>
+  </a>
+</section>
+
+<!-- ITEM LIST -->
+<section class="py-5 bg-image overlay-primary fixed overlay" id="next">
+  <div class="container">
+    <div class="row mb-5 justify-content-center">
+      <div class="col-md-7 text-center">
+        <h2 class="section-title mb-2 text-white">SecureTrade Site Stats</h2>
+        <p class="lead text-white">
+          Education brings opportunities of unlimited learning.
+        </p>
+      </div>
+    </div>
+    <div class="row pb-0 block__19738 section-counter">
+      <div class="col-12 col-md-12 col-lg-12 mb-5 mb-lg-0">
+        <div class="d-flex align-items-center justify-content-center mb-2">
+          <strong class="number" data-number="{{postNumber}}">0</strong>
+        </div>
+        <span class="caption">Material Posted</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="site-section">
+  <div class="container">
+    {% for item in data %}
+    <ul class="job-listings mb-2">
+      <li class="job-listing d-block d-sm-flex pb-3 pb-sm-0 align-items-center">
+        <a href="{{url_for('post.get_post', post=item.post_id)}}"></a>
+        <div
+          class="job-listing-about d-sm-flex custom-width w-100 justify-content-between mx-4 py-2"
+        >
+          <div class="job-listing-position custom-width w-75 mb-3 mb-sm-0">
+            <h2>{{item.title|safe}}</h2>
+            <span>{{item.description|safe}}</span>
+          </div>
+          <div class="job-listing-meta">
+            <span class="badge badge-success"
+              >Posted on : {{item.created_on}}</span
+            >
+          </div>
+        </div>
+      </li>
+    </ul>
+    {% endfor %}
+    <div class="row pagination-wrap">
+      <div class="col-md-6 text-center text-md-left mb-4 mb-md-0">
+        <span
+          >Showing {{currentPage*postLimit-postLimit+1}} -
+          {{currentPage*postLimit}} Of {{postNumber}} Post</span
+        >
+      </div>
+      <div class="col-md-6 text-center text-md-right">
+        <div class="custom-pagination ml-auto">
+          <a href="{{url_for('common.index', page=startRange)}}" class="prev">Prev</a>
+          <div class="d-inline-block">
+            {% for paginationCount in range(startRange-1, endRange) %} {% if
+            paginationCount+1 == currentPage %}
+            <a
+              href="{{url_for('common.index', page=paginationCount+1)}}"
+              class="active"
+              >{{paginationCount+1}}</a
+            >
+            {% else %}
+            <a href="{{url_for('common.index', page=paginationCount+1)}}"
+              >{{paginationCount+1}}</a
+            >
+            {% endif %} {% endfor %}
+          </div>
+          <a href="{{url_for('common.index', page=endRange)}}" class="next">Next</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  $(document).ready(function () {
+    // Create alphanumeric validator and common symbol validator
+    jQuery.validator.addMethod("alphanumeric", function (value, element) {
+      return (
+        this.optional(element) ||
+        /^[ A-Za-z0-9~!@#$%^&*\\(\\)_+-=""'':;,<>.?/~`]+$/i.test(value)
+      );
+    });
+
+    $("#error-note").hide();
+    $("#form").validate({
+      errorLabelContainer: "#error-note",
+      errorElement: "div",
+      rules: {
+        search: {
+          required: true,
+          alphanumeric: true,
+          maxlength:255
+        },
+      },
+      messages: {
+        search: {
+          required: "Please enter the search term.",
+          alphanumeric: "Letters, numbers, and common symbols only.",
+          maxlength: "The number of character in search exceed 255 character."
+        },
+      },
+      invalidHandler: function (event, validator) {
+        // 'this' refers to the form
+        var errors = validator.numberOfInvalids();
+        if (errors) {
+          $("#error-note").show();
+        } else {
+          $("#error-note").text = "";
+          $("#error-note").hide();
+        }
+      },
+      submitHandler: function (form) {
+        $("#error-note").text = "";
+        $("#error-note").hide();
+        $(form).ajaxSubmit();
+      },
+    });
+  });
+</script>
+
+{% endblock %}
