@@ -14,6 +14,13 @@ pipeline {
 				}
 			}
 		}
+
+		stage('run Test'){
+			agent { dockerfile { filename 'Dockerfile' reuseNode true} }
+			steps {
+				sh "echo 'Test Success'"
+			}
+		}
 	}
 
 }
