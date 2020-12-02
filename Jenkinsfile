@@ -1,10 +1,9 @@
 pipeline {
 	agent any
 
-	// environment {
-        // CONFIGURATION_SETUP = 'TestingConfig'
-		// SCANNER_HOME =  tool 'DefaultTest'
-    // }
+	environment {
+		SCANNER_HOME =  tool 'DefaultTest'
+    }
 
 	stages {
 		
@@ -26,27 +25,13 @@ pipeline {
 			parallel {
 
 
-				// stage('SonarQube analysis') {
-				// 	steps {
-				// 		withSonarQubeEnv('Default') {
-				// 			sh "$SCANNER_HOME/bin/sonar-scanner"
-				// 		}
-				// 	}
-				// }
-
-				// stage('Unit Test') {
-				// 	agent { dockerfile { filename 'Dockerfile' reuseNode true} }
-
-				// 	steps {
-				// 	sh "py.test --junitxml tests/test_result.xml tests/test.py"
-				// 	}
-
-				// 	post {
-				// 		always {
-				// 			junit 'tests/*.xml'
-				// 		}					
-				// 	}
-				// }
+				stage('SonarQube analysis') {
+					steps {
+						withSonarQubeEnv('Default') {
+							sh "$SCANNER_HOME/bin/sonar-scanner"
+						}
+					}
+				}
 
 				stage('Selenium Test') {
 					agent { dockerfile { filename 'Dockerfile' reuseNode true} }
