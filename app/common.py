@@ -1,8 +1,6 @@
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, escape
 from werkzeug.exceptions import abort
 import math
-from app.auth import login_required
-from app.db import get_db
 
 
 bp = Blueprint("common", __name__)
@@ -11,51 +9,23 @@ bp = Blueprint("common", __name__)
 @bp.route("/", methods=("GET", "POST"))
 def index():
     if request.method == "GET":
-        # Set default data, 
-        # postLimit : number of post per pagination
-        # pageNumber : current page number, default set to 0
-        postLimit = 15
-        pageNumber = 0
+        return render_template("home.html")
+    if request.method == "POST":
+        try:
+            password = request.form["password"]
+            if (validatePassword(password)):
+                return redirect(url_for("common.home"))
+            else:
+                return redirect(url_for("common.index"))
+        except:
+            return redirect(url_for("common.index"))
 
-        # Check for pagination by retrieving page from get argument
-        if "page" in request.args:
-            try:
-                pageNumber = int(request.args["page"]) -1
-            except:
-                return render_template("index.html")
+@bp.route("/home", methods=("GET", "POST"))
+def home():
+    if request.method == "GET":
+        return render_template("welcome.html")
 
-        db = get_db()
-
-        numOfPost = db.retrieve_number_of_post()
-
-        numOfPage = math.ceil(numOfPost / postLimit)
-        pageRange = countPageRange(pageNumber, numOfPage)
-
-        postList = db.retrieve_post_list(pageNumber, postLimit)
-
-        return render_template("index.html",
-        data=postList,
-        currentPage = pageNumber+1,
-        startRange = pageRange.get("start"), 
-        endRange = pageRange.get("end"),
-        postLimit = postLimit,
-        postNumber=numOfPost)
-    return render_template("index.html")
-
-
-def countPageRange(page, pageCount):
-    start = page-2
-    end = page+2
-
-    if(end > pageCount):
-        start -= (end-pageCount)
-        end = pageCount
-
-    if(start <= 0):
-        end += ((start-1)*(-1))
-        start = 1
-
-    if (end > pageCount):
-        end = pageCount
-
-    return {"start": start, "end": end}
+def validatePassword(password):
+    if len(password) >= 8:
+        return True
+    return False
