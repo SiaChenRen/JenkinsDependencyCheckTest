@@ -7,13 +7,10 @@ myPath = os.path.dirname(os.path.abspath(__file__))
 abc = sys.path.insert(0, myPath + '/../')
 
 import unittest
-import urllib.request
-import random
-
 from flask import Flask
 from flask_testing import LiveServerTestCase
 from app import create_app
-from app.db import DB
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
