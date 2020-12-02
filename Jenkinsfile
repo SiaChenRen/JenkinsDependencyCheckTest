@@ -3,7 +3,7 @@ pipeline {
 
 	environment {
         CONFIGURATION_SETUP = 'TestingConfig'
-		// SCANNER_HOME =  tool 'SonarQubeScanner'
+		SCANNER_HOME =  tool 'Default'
     }
 
 	stages {
@@ -20,16 +20,19 @@ pipeline {
 			}
 		}
 
-		// stage('SonarQube analysis') {
-		// 	steps {
-		// 		withSonarQubeEnv('Default') {
-		// 			sh "$SCANNER_HOME/bin/sonar-scanner"
-		// 		}
-		// 	}
-		// }
+
 
 		stage('Run Tests') {
 			parallel {
+
+				stage('SonarQube analysis') {
+					steps {
+						withSonarQubeEnv('Default') {
+							sh "$SCANNER_HOME/bin/sonar-scanner"
+						}
+					}
+				}
+
 				stage('Unit Test') {
 					agent { dockerfile { filename 'Dockerfile' reuseNode true} }
 
