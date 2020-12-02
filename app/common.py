@@ -2,7 +2,8 @@ from flask import Blueprint, flash, g, redirect, render_template, request, url_f
 import os
 
 bp = Blueprint("common", __name__)
-
+basedir = os.path.abspath(os.path.dirname(__file__))
+data_file = os.path.join(basedir, 'static/100password.txt')
 
 @bp.route("/", methods=("GET", "POST"))
 def index():
@@ -30,6 +31,9 @@ def validatePassword(password):
     if len(password) < 8:
         return False
     
+    with open(data_file, "r") as file:
+        if password in file.read():
+            return False
     return True
 
     
