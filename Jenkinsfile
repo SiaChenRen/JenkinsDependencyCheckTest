@@ -69,8 +69,6 @@ pipeline {
 	post {
 		always {
 			recordIssues enabledForFailure: true, tools: [pyLint()]
-			recordIssues enabledForFailure: true, tool: cpd(pattern: '**/*.py')
-			recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/*.py')
 		}
 	}
 }
