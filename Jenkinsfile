@@ -3,7 +3,7 @@ pipeline {
 
 	environment {
         CONFIGURATION_SETUP = 'TestingConfig'
-		SCANNER_HOME =  tool 'Default'
+		SCANNER_HOME =  tool 'DefaultTest'
     }
 
 	stages {
