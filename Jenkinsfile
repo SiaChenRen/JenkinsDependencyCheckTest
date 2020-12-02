@@ -24,16 +24,8 @@ pipeline {
 
 		stage('Run Tests') {
 			parallel {
-				stage('Next generation warning'){
-					post {
-						always {
-							recordIssues enabledForFailure: true, tools: [pyLint()]
-							recordIssues enabledForFailure: true, tool: cpd(pattern: '**/*.py')
-							recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/*.py')
-						}
-					}
-				}
-				
+
+
 				stage('SonarQube analysis') {
 					steps {
 						withSonarQubeEnv('Default') {
@@ -73,5 +65,12 @@ pipeline {
 			}
 		}
 	}
-
+					
+	post {
+		always {
+			recordIssues enabledForFailure: true, tools: [pyLint()]
+			recordIssues enabledForFailure: true, tool: cpd(pattern: '**/*.py')
+			recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/*.py')
+		}
+	}
 }
