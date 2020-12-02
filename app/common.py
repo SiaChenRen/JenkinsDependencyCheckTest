@@ -1,7 +1,5 @@
 from flask import Blueprint, flash, g, redirect, render_template, request, url_for, escape
-from werkzeug.exceptions import abort
-import math
-
+import os
 
 bp = Blueprint("common", __name__)
 
@@ -24,8 +22,15 @@ def index():
 def home():
     if request.method == "GET":
         return render_template("welcome.html")
+    
+    if request.method == "POST":
+        return redirect(url_for("common.index"))
 
 def validatePassword(password):
-    if len(password) >= 8:
-        return True
-    return False
+    if len(password) < 8:
+        return False
+    
+    return True
+
+    
+
