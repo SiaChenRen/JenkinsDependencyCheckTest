@@ -56,7 +56,7 @@ class Test(LiveServerTestCase):
 
 
     def test_logout_valid(self):
-        self.driver.get(self.get_server_url() + "/")
+        self.driver.get(self.get_server_url() + "/home")
 
         logoutButton = "body > form > input[type=submit])"
         self.driver.find_element_by_css_selector(logoutButton).click()
