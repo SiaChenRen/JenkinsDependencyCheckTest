@@ -33,11 +33,7 @@ class Test(LiveServerTestCase):
     def setUp(self):
         # setup flask app
         app = create_app()
-        app.config.from_object('config.TestingConfig')
         self.app = app.test_client()
-        with app.app_context():
-            from app.ocr import Tesseract
-            self.Tesseract = Tesseract()
 
         # setup chromedriver
         opts = Options()
@@ -53,12 +49,8 @@ class Test(LiveServerTestCase):
     def tearDown(self):
         self.driver.quit()
 
-    def test_server_is_up_and_running(self):
-        response = urllib.request.urlopen(self.get_server_url())
-        self.assertEqual(response.code, 200)
-
     def test_login_valid(self):
-        self.driver.get(self.get_server_url() + "/auth/login")
+        self.driver.get(self.get_server_url() + "/")
         self.driver.find_element_by_name("password").send_keys("asdasdasd")
 
         loginButton = "body > form > input[type=submit]:nth-child(4)"
